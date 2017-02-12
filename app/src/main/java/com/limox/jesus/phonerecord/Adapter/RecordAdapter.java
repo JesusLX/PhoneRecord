@@ -7,22 +7,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.limox.jesus.phonerecord.Provider.RecordContrat;
 import com.limox.jesus.phonerecord.R;
 
 /**
  * Created by usuario on 10/02/17.
  */
 
-public class ContactAdapter extends CursorAdapter {
+public class RecordAdapter extends CursorAdapter {
 
-    public ContactAdapter(Context context, Cursor c, int flags) {
+    public RecordAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
-    public class ContactHolder{
+
+    private class ContactHolder{
         TextView txvPhone;
         TextView txvType;
         TextView txvTime;
@@ -42,8 +41,22 @@ public class ContactAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ContactHolder holder = (ContactHolder) view.getTag();
-        holder.txvPhone.setText(cursor.getString(RecordContrat.Record.NUMBER_KEY));
-        holder.txvTime.setText(cursor.getString(RecordContrat.Record.DURATION_KEY));
-        holder.txvType.setText(cursor.getString(RecordContrat.Record.TYPE_KEY));
+
+        holder.txvPhone.setText(cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER)));
+        holder.txvTime.setText(cursor.getString(cursor.getColumnIndex(CallLog.Calls.DURATION)));
+
+        String sType= "";
+        switch (cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE))){
+            case CallLog.Calls.INCOMING_TYPE:
+                sType = "ENTRANTE";
+                break;
+            case CallLog.Calls.OUTGOING_TYPE:
+                sType = "SALIENTE";
+                break;
+            case CallLog.Calls.MISSED_TYPE:
+                sType = "PERDIDA";
+                break;
+        }
+        holder.txvType.setText(sType);
     }
 }
